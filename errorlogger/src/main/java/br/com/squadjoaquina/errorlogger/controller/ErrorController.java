@@ -26,8 +26,9 @@ public class ErrorController {
     }
 
     @PostMapping("/save")
-    public ResponseEntity<String> save(@Valid @RequestBody ErrorDTO error){
-        return new ResponseEntity<>(errorService.save(error), HttpStatus.OK);
+    public ResponseEntity<Void> save(@Valid @RequestBody ErrorDTO error){
+        errorService.save(error);
+        return ResponseEntity.ok().build();
     }
 
     @RequestMapping("/search")
@@ -41,7 +42,8 @@ public class ErrorController {
     }
 
     @RequestMapping("/stash/{id}")
-    public ResponseEntity<String> stash(@PathVariable Long id) {
-        return new ResponseEntity<>(errorService.stach(id), HttpStatus.OK);
+    public ResponseEntity<Void> stash(@PathVariable Long id) {
+        errorService.stach(id);
+        return ResponseEntity.ok().build();
     }
 }

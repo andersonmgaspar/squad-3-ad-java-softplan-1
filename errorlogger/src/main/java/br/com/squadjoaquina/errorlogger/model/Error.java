@@ -30,9 +30,11 @@ public class Error {
     private Long userID;
 
     @NotNull
+    @Enumerated(EnumType.STRING)
     private Level level;
 
     @NotNull
+    @Enumerated(EnumType.STRING)
     private Environment environment;
 
     private boolean archived = false;

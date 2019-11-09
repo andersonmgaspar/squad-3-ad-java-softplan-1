@@ -4,6 +4,7 @@ import br.com.squadjoaquina.errorlogger.dto.ErrorDTO;
 import br.com.squadjoaquina.errorlogger.mapper.ErrorMapper;
 import br.com.squadjoaquina.errorlogger.model.Error;
 import br.com.squadjoaquina.errorlogger.repository.ErrorRepository;
+import br.com.squadjoaquina.errorlogger.service.exception.ErrorAlreadyArchivedException;
 import br.com.squadjoaquina.errorlogger.service.exception.ErrorNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -31,10 +32,9 @@ public class ErrorService {
         }
     }
 
-    public String save(ErrorDTO errorDTO){
-        errorDTO.setCreatedAt(new Timestamp(System.currentTimeMillis()));
+    public void save(ErrorDTO errorDTO){
+        errorDTO.setCreatedAt(new Timestamp(System.currentTimeMillis()));//Ativar a auditoria para não ter que setar o timestamp na mão
         errorRepository.save(ErrorMapper.toError(errorDTO));
-        return "Erro salvo com sucesso!";
     }
 
     public void delete(Long id) {
@@ -45,19 +45,14 @@ public class ErrorService {
         }
     }
 
-    public String stach(Long id) {
-//        if (getById(id).equals(new ErrorNotFoundException())) {
-//            return "O erro escolhido não existe no sistema!";
-//        } else {
-            ErrorDTO error = getById(id);
-            if (error.isArchived()) {
-                return "O erro escolhido já está arquivado!";
-            } else {
-                error.setArchived(true);
-                error.setArchivedAt(new Timestamp(System.currentTimeMillis()));
-                errorRepository.save(ErrorMapper.toError(error));
-                return "Erro arquivado com sucesso!";
-            }
+    public void stach(Long id) {
+        ErrorDTO error = getById(id);
+        if (error.isArchived()) {
+            throw new ErrorAlreadyArchivedException();
+        } else {
+            error.setArchived(true);
+            error.setArchivedAt(new Timestamp(System.currentTimeMillis()));
+            errorRepository.save(ErrorMapper.toError(error));
         }
-    //}
+    }
 }
